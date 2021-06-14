@@ -1,0 +1,13 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Error page
+{% endblock %}
+
+{% block body %}
+    <h1>Error page</h1>
+    <br>
+
+    <p>That page already exists please click <a href="{% url 'pages' page=r_page %}">here</a> to go to the page</p>
+
+{% endblock %}
