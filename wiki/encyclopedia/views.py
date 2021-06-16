@@ -21,11 +21,13 @@ def index(request):
 
 def pages(request, page):
     pages = [entry.lower() for entry in os.listdir(file_path)]
-    entries = [entry.lower() for entry in util.list_entries()]
     page = page.lower()
+    entries = [os.path.splitext(entry.lower())[0] for entry in util.list_entries()]
+    context = {'check_list': entries, 'page_title':page} 
+    
     #page in entries
     if f'{page}.html' in pages:
-        return render(request,f'encyclopedia/{page}.html')
+        return render(request,f'encyclopedia/{page}.html', context)
     else:
         return render(request, "encyclopedia/error.html")
 

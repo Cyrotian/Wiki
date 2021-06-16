@@ -19,7 +19,7 @@
                     <a href="{% url 'index' %}">Home</a>
                 </div>
                 <div>
-                    <a href="{% url 'createNew'%}">Create New Page</a>
+                    <a href="{% url 'createNew' %}">Create New Page</a>
                     
                 </div>
                 <div>
@@ -29,8 +29,14 @@
                 {% endblock %}
             </div>
             <div class="main col-lg-10 col-md-9">
+
                 {% block body %}
+                    
+        
                 {% endblock %}
+                {% if page_title in check_list %}
+                            <input type="submit" value="Edit" class='page_btn'>
+                {% endif %}
             </div>
         </div>
 
