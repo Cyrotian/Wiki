@@ -51,7 +51,7 @@ def search(request):
     return render(request,"encyclopedia/search.html",context)
     
            
-def convert():  
+def convert(page=''):  
     _, md_files = default_storage.listdir("entries") #upacking the tuple
      
     for file in md_files:
@@ -70,6 +70,23 @@ def convert():
                     '{% endblock %}'
                 )
                 return True
+    
+    if page != '':
+        details = markdown2.markdown(util.get_entry(page))
+        with open(f'{file_path}{page}.html', "w") as f:
+                f.write(
+                    '{% extends "encyclopedia/layout.html" %}'
+                    '{% block title %}'
+                        f'{file}'
+                    '{% endblock %}'
+
+                    '{% block body %}'
+                        f'{details}'
+                    '{% endblock %}'
+                )
+                return True
+
+
     return False
 
 def create_new_page(request):
@@ -87,9 +104,19 @@ def create_new_page(request):
         else:
             return render(request, "encyclopedia/page_redirect.html",{"r_page":f'{title}'} )
 
-def edit_entry(request):
+def edit_entry(request, page):
     #figure out how to know when a button is pressed on a form
         #do buttons have action?
     # figure out how to populate the form fields
     #figure out the urls
-    pass
+    page = page.capitalize()
+    if request.method == 'GET':
+        page_details = util.get_entry(page)
+        edit_form = NewPageForm(initial={'Title':f'{page}', 'Details':f'{page_details}'})
+        return render(request,"encyclopedia/New_Page.html",{"form":edit_form})
+    else:
+        util.save_entry(page, request.POST['Details'])
+        if convert(page):
+            pages(request, page)
+
+
