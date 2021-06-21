@@ -8,6 +8,7 @@ import encyclopedia
 from django.core.files.storage import default_storage
 import markdown2
 from django import forms, http
+import random
 
 class NewPageForm(forms.Form):
     Title = forms.CharField(label='Title', max_length='20', required=True)
@@ -100,15 +101,11 @@ def create_new_page(request):
         if f'{title}.html'not in files:
             util.save_entry(title, details)
             if convert():
-                return render(request, f'encyclopedia/{title}.html')
+                return pages(request, f'{title}')
         else:
             return render(request, "encyclopedia/page_redirect.html",{"r_page":f'{title}'} )
 
 def edit_entry(request, page):
-    #figure out how to know when a button is pressed on a form
-        #do buttons have action?
-    # figure out how to populate the form fields
-    #figure out the urls
     page = page.capitalize()
     if request.method == 'GET':
         page_details = util.get_entry(page)
@@ -117,6 +114,11 @@ def edit_entry(request, page):
     else:
         util.save_entry(page, request.POST['Details'])
         if convert(page):
-            pages(request, page)
+            return pages(request, page)
 
+def random_page(request):
+    _, files = default_storage.listdir("entries")
+    files = [os.path.splitext(file)[0] for file in files]
+    page = random.choice(files)
+    return pages(request,page)
 
